@@ -12,76 +12,61 @@ from typing import List
 from maze.util import Coordinates
 from maze.graph import Graph
 
-
 class EdgeListGraph(Graph):
-    """
-    Represents an undirected graph.  Please complete the implementations of each method.  See the documentation for the parent class
-    to see what each of the overriden methods are meant to do.
-    """
-
     def __init__(self):
-        ### Implement me! ###
-        pass
-
-
-        
-    def addVertex(self, label:Coordinates):
-        ### Implement me! ###
-        pass
-
-
-
-    def addVertices(self, vertLabels:List[Coordinates]):
-        ### Implement me! ###
-        pass
-
-
-
-    def addEdge(self, vert1:Coordinates, vert2:Coordinates, addWall:bool = False)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-        
-
-
-    def updateWall(self, vert1:Coordinates, vert2:Coordinates, wallStatus:bool)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-
-
-
-    def removeEdge(self, vert1:Coordinates, vert2:Coordinates)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-        
-
-
-    def hasVertex(self, label:Coordinates)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-
-
-
-    def hasEdge(self, vert1:Coordinates, vert2:Coordinates)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-
-
-
-    def getWallStatus(self, vert1:Coordinates, vert2:Coordinates)->bool:
-        ### Implement me! ###
-        # remember to return booleans
-        pass
-        
+        self.vertices = []
+        self.edges = []
     
-
-
-    def neighbours(self, label:Coordinates)->List[Coordinates]:
-        ### Implement me! ###
-        # remember to return list of coordinates
-        pass
-        
+    def addVertex(self, label: Coordinates):
+        if label not in self.vertices:
+            self.vertices.append(label)
+    
+    def addVertices(self, vertLabels: List[Coordinates]):
+        for label in vertLabels:
+            if label not in self.vertices:
+                self.vertices.append(label)
+    
+    def addEdge(self, vert1: Coordinates, vert2: Coordinates, addWall: bool = False) -> bool:
+        if vert1 in self.vertices and vert2 in self.vertices:
+            if not self.hasEdge(vert1, vert2):
+                self.edges.append((vert1, vert2, addWall))
+                return True
+        return False
+    
+    def updateWall(self, vert1: Coordinates, vert2: Coordinates, wallStatus: bool) -> bool:
+        for i, edge in enumerate(self.edges):
+            if (edge[0] == vert1 and edge[1] == vert2) or (edge[0] == vert2 and edge[1] == vert1):
+                self.edges[i] = (vert1, vert2, wallStatus)
+                return True
+        return False
+    
+    def removeEdge(self, vert1: Coordinates, vert2: Coordinates) -> bool:
+        for edge in self.edges:
+            if (edge[0] == vert1 and edge[1] == vert2) or (edge[0] == vert2 and edge[1] == vert1):
+                self.edges.remove(edge)
+                return True
+        return False
+    
+    def hasVertex(self, label: Coordinates) -> bool:
+        return label in self.vertices
+    
+    def hasEdge(self, vert1: Coordinates, vert2: Coordinates) -> bool:
+        for edge in self.edges:
+            if (edge[0] == vert1 and edge[1] == vert2) or (edge[0] == vert2 and edge[1] == vert1):
+                return True
+        return False
+    
+    def getWallStatus(self, vert1: Coordinates, vert2: Coordinates) -> bool:
+        for edge in self.edges:
+            if (edge[0] == vert1 and edge[1] == vert2) or (edge[0] == vert2 and edge[1] == vert1):
+                return edge[2]
+        return False
+    
+    def neighbours(self, label: Coordinates) -> List[Coordinates]:
+        neighbors = []
+        for edge in self.edges:
+            if edge[0] == label:
+                neighbors.append(edge[1])
+            elif edge[1] == label:
+                neighbors.append(edge[0])
+        return neighbors
